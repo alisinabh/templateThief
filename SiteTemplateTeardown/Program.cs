@@ -11,8 +11,8 @@ namespace SiteTemplateTeardown
 {
     class Program
     {
-        const string BaseURL = "http://themes.3rdwavemedia.com/delta/1.8/";
-        const string FirstFireURL = "http://themes.3rdwavemedia.com/delta/1.8/";
+        const string BaseURL = "http://adminbootstrap.com/wb/right/0.1.0/";
+        const string FirstFireURL = "http://adminbootstrap.com/wb/right/0.1.0/";
         string baseData;
         static void Main(string[] args)
         {
