@@ -9,10 +9,20 @@ using System.Threading.Tasks;
 
 namespace SiteTemplateTeardown
 {
+
+    class MyWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            return request;
+        }
+    }
     class Program
     {
-        const string BaseURL = "http://adminbootstrap.com/wb/right/0.1.0/";
-        const string FirstFireURL = "http://adminbootstrap.com/wb/right/0.1.0/";
+        const string BaseURL = "http://simpleqode.com/preview/spotlight/1.0.1/";
+        const string FirstFireURL = "http://simpleqode.com/preview/spotlight/1.0.1/index.html";
         string baseData;
         static void Main(string[] args)
         {
@@ -148,9 +158,11 @@ namespace SiteTemplateTeardown
                     address = tmp + address;
                 }
             }
-           
 
-            WebClient client = new WebClient();
+
+            MyWebClient client = new MyWebClient();
+
+            client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
 
             if (address.StartsWith("/"))
                 address = address.Substring(1);
@@ -165,7 +177,12 @@ namespace SiteTemplateTeardown
                 Console.WriteLine("Downloading " + address + "...");
 
                 if (!File.Exists(address.Replace("/", "\\")))
-                    client.DownloadFile(BaseURL + address, address.Replace("/", "\\").Substring(0, (address.LastIndexOf("?") == -1) ? address.Length : address.LastIndexOf("?")));
+                {
+                    byte[] data = client.DownloadData(BaseURL + address);
+                    FileStream fs = File.Create(address.Replace("/", "\\").Substring(0, (address.LastIndexOf("?") == -1) ? address.Length : address.LastIndexOf("?")));
+                    fs.Write(data, 0, data.Length);
+                    //client.DownloadFile(BaseURL + address, address.Replace("/", "\\").Substring(0, (address.LastIndexOf("?") == -1) ? address.Length : address.LastIndexOf("?")));
+                }
                 else
                     Console.WriteLine("Exists!");
             }
